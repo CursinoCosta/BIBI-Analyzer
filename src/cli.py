@@ -1,3 +1,5 @@
+from src.metrics import compute_author_stats, sort_author_stats
+from src.git_loader import load_commits
 from typing import Optional
 from pathlib import Path
 import typer
@@ -15,13 +17,6 @@ def analyze(repo_path: str = typer.Option(..., "--repo-path", help="Path to the 
         raise typer.Exit(code=1)
 
     try:
-        from src.git_loader import load_commits
-        from src.metrics import compute_author_stats
-    except Exception as exc:
-        typer.echo(f"Internal error importing modules: {exc}")
-        raise typer.Exit(code=1)
-
-    try:
         commits = load_commits(str(repo))
     except Exception as exc:
         typer.echo(f"Error loading commits: {exc}")
@@ -33,7 +28,8 @@ def analyze(repo_path: str = typer.Option(..., "--repo-path", help="Path to the 
         return
 
     typer.echo("Authors:")
-    for author, count in sorted(stats.items(), key=lambda x: -x[1]):
+    sorted_stats = sort_author_stats(stats)
+    for author, count in sorted_stats:
         typer.echo(f"{author}: {count} commits")
 
 
