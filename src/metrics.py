@@ -29,6 +29,7 @@ def compute_author_stats(commits: Iterable[object]) -> Dict[str, int]:
         )
     )
 
-
+def sort_author_stats(stats: dict) -> list[tuple[str, int]]:
+    return sorted(stats.items(), key=lambda x: x[1], reverse=True)
 
 
